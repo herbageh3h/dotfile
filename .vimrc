@@ -48,8 +48,6 @@ let maplocalleader="\\"
 
 noremap q: :q
 
-nnoremap <Leader>j :call GotoJump()<CR>
-
 vnoremap <silent> <C-c> :<CR>:let @a=@" \| execute "normal! vgvy" \| let res=system("pbcopy", @") \| let @"=@a<CR>
 
 noremap <Leader>. :cd %:p:h<cr>:pwd<cr>
@@ -82,10 +80,6 @@ execute pathogen#infect()
 " plugin matchit
 runtime! macros/matchit.vim
 
-" plugin mru
-let MRU_Max_Entries = 400
-map <leader>r :MRU<CR>
-
 " plugin denite
 call denite#custom#var('grep', 'command', ['rg'])
 call denite#custom#var('grep', 'default_opts',
@@ -97,10 +91,14 @@ call denite#custom#var('grep', 'final_opts', [])
 
 "call denite#custom#var('file_rec', 'command', ['rg', '--files', '--glob', '!node_modules'])
 
-nnoremap <leader>f :<C-u>Denite file_rec<CR>
-nnoremap <leader>b :<C-u>Denite buffer -mode=normal<CR>
+nnoremap <leader>f :CtrlP<CR>
+nnoremap <leader>b :CtrlPBuffer<CR>
+nnoremap <leader>r :CtrlPMRU<CR>
 nnoremap <leader>c :<C-u>Denite history:cmd<CR>
 nnoremap <leader>s :<C-u>Denite grep:.<CR>
+
+" CtrlP
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 
 " plugin vim-javacomplete
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
@@ -112,20 +110,6 @@ let g:tagbar_left = 1
 nnoremap <silent> <leader>t :TagbarToggle<CR>
 
 " helper functions
-function! GotoJump()
-  jumps
-  let j = input("Please select your jump: ")
-  if j != ''
-    let pattern = '\v\c^\+'
-    if j =~ pattern
-      let j = substitute(j, pattern, '', 'g')
-      execute "normal " . j . "\<c-i>"
-    else
-      execute "normal " . j . "\<c-o>"
-    endif
-  endif
-endfunction
-
 function! VisualSelection(direction, extra_filter) range
     let l:saved_reg = @"
     execute "normal! vgvy"
@@ -142,3 +126,12 @@ function! VisualSelection(direction, extra_filter) range
     let @/ = l:pattern
     let @" = l:saved_reg
 endfunction
+
+" allows cursor change in tmux mode
+if exists('$TMUX')
+    let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+    let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+else
+    let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+    let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+endif
