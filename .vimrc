@@ -5,8 +5,11 @@ syntax enable
 set autoread
 set ruler
 set encoding=utf8
+set termencoding=utf8
+set fileencodings=utf8,gbk
 set history=1000
 set path=$PWD/**
+set lazyredraw
 
 set shiftround
 set autoindent
@@ -29,9 +32,15 @@ set ignorecase
 set smartcase
 set nohlsearch
 set incsearch
+set magic
 
-set visualbell t_vb=
+set laststatus=0
+
+set noerrorbells
 set novisualbell
+set t_vb=
+set ttyfast
+set nrformats=
 
 set wildmenu
 set wildignore+=node_modules/*,bower_components/*,.git/*
@@ -46,11 +55,11 @@ iabbrev mymail herbage_h2h@sina.com
 let mapleader="\<space>"
 let maplocalleader="\\"
 
+inoremap jk <esc>
 noremap q: :q
 
 vnoremap <silent> <C-c> :<CR>:let @a=@" \| execute "normal! vgvy" \| let res=system("pbcopy", @") \| let @"=@a<CR>
 
-noremap <Leader>. :cd %:p:h<cr>:pwd<cr>
 nnoremap <M-j> mz:m+<cr>`z
 nnoremap <M-k> mz:m-2<cr>`z
 vnoremap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
@@ -64,21 +73,35 @@ noremap <C-j> <C-W>j
 noremap <C-k> <C-W>k
 noremap <C-l> <C-W>l
 
+" leader shortcut
+nnoremap <Leader>. :cd %:p:h<cr>:pwd<CR>
+nnoremap <Leader>, :e ~/scratch.tmp<CR>
+nnoremap <Leader><Tab> :bprevious<CR>
+
 nnoremap <Leader>vf :find $MYVIMRC<CR>
 nnoremap <Leader>vs :source $MYVIMRC<CR>
 
-inoremap jk <esc>
+nnoremap <Leader>yf :put =expand('%:t')<CR>
+nnoremap <Leader>yp :put =expand('%:p')<CR>
+nnoremap <Leader>yd :put =expand('%:p:h')<CR>
 
 " netrw
 let g:netrw_winsize=-40
 let g:netrw_liststyle=3
-
+let g:netrw_browse_split=4
 
 " plugin manager
 execute pathogen#infect()
+call pathogen#helptags()
 
 " plugin matchit
 runtime! macros/matchit.vim
+
+" nerdtree
+nnoremap <Leader>nn :NERDTreeToggle<CR>
+nnoremap <Leader>nf :NERDTreeFind<CR>
+let g:NERDTreeWinSize=40
+let NERDTreeIgnore = ['node_modules']
 
 " plugin denite
 call denite#custom#var('grep', 'command', ['rg'])
@@ -103,6 +126,7 @@ let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standar
 " plugin vim-javacomplete
 autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
+" plugin neoformat
 nnoremap <silent> <leader>= :Neoformat<CR>
 
 " plugin tagbar
@@ -135,3 +159,18 @@ else
     let &t_SI = "\<Esc>]50;CursorShape=1\x7"
     let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 endif
+
+" html filetype
+autocmd FileType html setlocal shiftwidth=2 tabstop=2 softtabstop=2
+
+let g:user_emmet_install_global = 0
+autocmd FileType html,css EmmetInstall
+
+" helper script
+nnoremap <expr> ,p '`[' . strpart(getregtype(), 0, 1) . '`]''`]`'
+
+" plugin vim-yankstack
+let g:AutoPairsShortcutToggle = ''
+call yankstack#setup()
+nmap <M-p> <Plug>yankstack_substitute_older_paste
+nmap <M-P> <Plug>yankstack_substitute_newer_paste
