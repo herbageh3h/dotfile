@@ -184,4 +184,4 @@ let g:deoplete#auto_complete_delay = 0
 " let g:deoplete#disable_auto_complete = 1
 inoremap <expr><C-y>  deoplete#mappings#close_popup()
 inoremap <expr><C-e>  deoplete#mappings#cancel_popup()
-inoremap <expr><C-h> deolete#mappings#smart_close_popup()."\<C-h>"
+"inoremap <expr><C-h> deolete#mappings#smart_close_popup()."\<C-h>"
