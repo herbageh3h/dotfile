@@ -10,6 +10,7 @@ set fileencodings=utf8,gbk
 set history=1000
 set path=$PWD/**
 set lazyredraw
+set hidden
 
 set shiftround
 set autoindent
@@ -46,7 +47,7 @@ set wildmenu
 set wildignore+=node_modules/*,bower_components/*,.git/*
 set wildignore+=*.class
 
-colorscheme monokai
+colorscheme molokai
 
 " abbrev
 iabbrev mymail herbage_h2h@sina.com
@@ -77,6 +78,7 @@ noremap <C-l> <C-W>l
 nnoremap <Leader>. :cd %:p:h<cr>:pwd<CR>
 nnoremap <Leader>, :e ~/scratch.tmp<CR>
 nnoremap <Leader><Tab> :bprevious<CR>
+nnoremap <Leader>q :bnext<CR>
 
 nnoremap <Leader>vf :find $MYVIMRC<CR>
 nnoremap <Leader>vs :source $MYVIMRC<CR>
@@ -97,7 +99,7 @@ call pathogen#helptags()
 " plugin matchit
 runtime! macros/matchit.vim
 
-" nerdtree
+" plugin nerdtree
 nnoremap <Leader>nn :NERDTreeToggle<CR>
 nnoremap <Leader>nf :NERDTreeFind<CR>
 let g:NERDTreeWinSize=40
@@ -120,11 +122,11 @@ nnoremap <leader>r :CtrlPMRU<CR>
 nnoremap <leader>c :<C-u>Denite history:cmd<CR>
 nnoremap <leader>s :<C-u>Denite grep:.<CR>
 
-" CtrlP
+" plugin CtrlP
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 
 " plugin vim-javacomplete
-autocmd FileType java setlocal omnifunc=javacomplete#Complete
+" autocmd FileType java setlocal omnifunc=javacomplete#Complete
 
 " plugin neoformat
 nnoremap <silent> <leader>= :Neoformat<CR>
@@ -167,10 +169,19 @@ let g:user_emmet_install_global = 0
 autocmd FileType html,css EmmetInstall
 
 " helper script
-nnoremap <expr> ,p '`[' . strpart(getregtype(), 0, 1) . '`]''`]`'
+nnoremap <expr> gb '`[' . strpart(getregtype(), 0, 1) . '`]''`]`'
 
 " plugin vim-yankstack
 let g:AutoPairsShortcutToggle = ''
 call yankstack#setup()
 nmap <M-p> <Plug>yankstack_substitute_older_paste
-nmap <M-P> <Plug>yankstack_substitute_newer_paste
+nmap <M-n> <Plug>yankstack_substitute_newer_paste
+
+" plugin deoplete
+call deoplete#enable()
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#auto_complete_delay = 0
+" let g:deoplete#disable_auto_complete = 1
+inoremap <expr><C-y>  deoplete#mappings#close_popup()
+inoremap <expr><C-e>  deoplete#mappings#cancel_popup()
+inoremap <expr><C-h> deolete#mappings#smart_close_popup()."\<C-h>"
