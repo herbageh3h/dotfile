@@ -66,9 +66,6 @@ nnoremap <M-k> mz:m-2<cr>`z
 vnoremap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
 vnoremap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
 
-vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
-vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
-
 noremap <C-h> <C-W>h
 noremap <C-j> <C-W>j
 noremap <C-k> <C-W>k
@@ -126,7 +123,8 @@ nnoremap <leader>s :<C-u>Denite grep:.<CR>
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 
 " plugin vim-javacomplete
-" autocmd FileType java setlocal omnifunc=javacomplete#Complete
+autocmd FileType java setlocal omnifunc=javacomplete#Complete
+let g:JavaComplete_ClasspathGenerationOrder = ['Maven', 'Eclipse', 'Gradle']
 
 " plugin neoformat
 nnoremap <silent> <leader>= :Neoformat<CR>
@@ -134,24 +132,6 @@ nnoremap <silent> <leader>= :Neoformat<CR>
 " plugin tagbar
 let g:tagbar_left = 1
 nnoremap <silent> <leader>t :TagbarToggle<CR>
-
-" helper functions
-function! VisualSelection(direction, extra_filter) range
-    let l:saved_reg = @"
-    execute "normal! vgvy"
-
-    let l:pattern = escape(@", "\\/.*'$^~[]")
-    let l:pattern = substitute(l:pattern, "\n$", "", "")
-
-    if a:direction == 'gv'
-        call CmdLine("Ack '" . l:pattern . "' " )
-    elseif a:direction == 'replace'
-        call CmdLine("%s" . '/'. l:pattern . '/')
-    endif
-
-    let @/ = l:pattern
-    let @" = l:saved_reg
-endfunction
 
 " allows cursor change in tmux mode
 if exists('$TMUX')
@@ -180,8 +160,9 @@ nmap <M-n> <Plug>yankstack_substitute_newer_paste
 " plugin deoplete
 call deoplete#enable()
 let g:deoplete#enable_at_startup = 1
-let g:deoplete#auto_complete_delay = 0
 " let g:deoplete#disable_auto_complete = 1
+let g:deoplete#ignore_sources = {}
+let g:deoplete#ignore_sources._ = ['javacomplete2']
 inoremap <expr><C-y>  deoplete#mappings#close_popup()
 inoremap <expr><C-e>  deoplete#mappings#cancel_popup()
-"inoremap <expr><C-h> deolete#mappings#smart_close_popup()."\<C-h>"
+inoremap <expr><C-h> deolete#mappings#smart_close_popup()."\<C-h>"

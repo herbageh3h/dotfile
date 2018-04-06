@@ -49,11 +49,11 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(git extract history-substring-search z docker brew)
 
 # User configuration
 
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+export PATH=$HOME/bin:$PATH
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
@@ -83,26 +83,53 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# better vi mode in zshell
+export KEYTIMEOUT=1
 bindkey -v
+bindkey -M viins '^a' beginning-of-line
+bindkey -M viins '^e' end-of-line
+bindkey -M viins '^k' kill-line
+bindkey -M vicmd '^a' beginning-of-line
+bindkey -M vicmd '^e' end-of-line
+bindkey -M vicmd '^k' kill-line
+
 bindkey "^P" up-line-or-search
 bindkey "^N" down-line-or-search
-
-# autojump plugin
-[[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
 
 # java
 export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
 export ECLIPSE_HOME=/Users/huanghao/eclipse
 export ANDROID_HOME=/Users/huanghao/Library/Android/sdk
 
-today() {
-  echo "Today is `date`"
-  return
+# node
+export NODE_HOME=/usr/local/Cellar/node/9.6.1
+export PATH=$NODE_HOME/bin:$PATH
+
+# mvn
+export MAVEN_HOME=/Users/huanghao/soft/maven/apache-maven-3.3.9
+export PATH=$MAVEN_HOME/bin:$PATH
+
+eval "$(fasd --init auto)"
+
+alias v='f -e vim'
+
+# Expand aliases
+expand-alias-space() {
+    zle _expand_alias
+    zle self-insert
+}
+zle -N expand-alias-space
+bindkey " " expand-alias-space
+
+# aliases
+source ~/.aliases
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+_fzf_compgen_path() {
+  fd --hidden --follow --exclude ".git" . "$1"
 }
 
-export PATH=~/soft/maven/apache-maven-3.3.9/bin:$PATH
-export PATH=$PATH:$ANDROID_HOME/tools
-export PATH=$PATH:$ANDROID_HOME/platform-tools
-
-# better vi mode in zshell
-export KEYTIMEOUT=1
+_fzf_compgen_dir() {
+  fd --type d --hidden --follow --exclude ".git" . "$1"
+}
